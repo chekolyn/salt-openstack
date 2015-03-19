@@ -1,6 +1,4 @@
 openstack:
-  '*':
-   - test
   "control01,node01,node02,node03":
     - match: list
     - {{ grains['os'] }}

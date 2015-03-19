@@ -57,17 +57,6 @@ Vagrant.configure("2") do |config|
     # Configure minion_id identifier if using a salted image:
     #node.vm.provision "shell", inline: "echo 'control01' > /etc/salt/minion_id"
 
-    # Add 3 additional 4GB drives
-    node.vm.provider "virtualbox" do |v|
-      # Add SATAController
-      v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
-      ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/control01-#{disk}.vdi")
-        v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
-      end
-    end
-
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
@@ -84,24 +73,27 @@ Vagrant.configure("2") do |config|
     node.vm.network :private_network, ip: "192.168.36.31"
 
     # Configure minion_id identifier
-    node.vm.provision "shell", inline: "echo 'node01' > /etc/salt/minion_id"
+    #node.vm.provision "shell", inline: "echo '#{node.vm.hostname}' > /etc/salt/minion_id"
 
+    # Configure extra drives, assume they all exist if the first one is present:
     # Add 3 additional 4GB drives
-    node.vm.provider "virtualbox" do |v|
-      # Add SATAController
-      v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
-      ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/node01-#{disk}.vdi")
-        v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+    unless File.exist?(File.expand_path("~/#{node.vm.hostname}-sata-1.vdi"))
+      node.vm.provider "virtualbox" do |v|
+        # Add SATAController
+        v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
+        ["1","2","3"].each do |disk|
+          diskname = File.expand_path("~/#{node.vm.hostname}-sata-#{disk}.vdi")
+          v.customize ['createhd', '--filename', diskname, '--size', 4096]
+          v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        end
       end
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/node01.pem'
-      salt.minion_pub = 'keys/node01.pub'
+      salt.minion_key = "keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
     end
   end
 
@@ -113,28 +105,31 @@ Vagrant.configure("2") do |config|
     node.vm.network :private_network, ip: "192.168.36.32"
 
     # Configure minion_id identifier
-    node.vm.provision "shell", inline: "echo 'node02' > /etc/salt/minion_id"
+    #node.vm.provision "shell", inline: "echo '#{node.vm.hostname}' > /etc/salt/minion_id"
 
+    # Configure extra drives, assume they all exist if the first one is present:
     # Add 3 additional 4GB drives
-    node.vm.provider "virtualbox" do |v|
-      # Add SATAController
-      v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
-      ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/node02-#{disk}.vdi")
-        v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+    unless File.exist?(File.expand_path("~/#{node.vm.hostname}-sata-1.vdi"))
+      node.vm.provider "virtualbox" do |v|
+        # Add SATAController
+        v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
+        ["1","2","3"].each do |disk|
+          diskname = File.expand_path("~/#{node.vm.hostname}-sata-#{disk}.vdi")
+          v.customize ['createhd', '--filename', diskname, '--size', 4096]
+          v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        end
       end
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/node02.pem'
-      salt.minion_pub = 'keys/node02.pub'
+      salt.minion_key = "keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
     end
   end
 
-    config.vm.define "node03" do |node|
+  config.vm.define "node03" do |node|
     node.vm.hostname = "node03"
     node.vm.network :private_network, ip: "192.168.33.33"
 
@@ -142,24 +137,28 @@ Vagrant.configure("2") do |config|
     node.vm.network :private_network, ip: "192.168.36.33"
 
     # Configure minion_id identifier
-    node.vm.provision "shell", inline: "echo 'node03' > /etc/salt/minion_id"
+    #node.vm.provision "shell", inline: "echo '#{node.vm.hostname}' > /etc/salt/minion_id"
 
+    # Configure extra drives, assume they all exist if the first one is present:
     # Add 3 additional 4GB drives
-    node.vm.provider "virtualbox" do |v|
-      # Add SATAController
-      v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
-      ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/node03-#{disk}.vdi")
-        v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+    unless File.exist?(File.expand_path("~/#{node.vm.hostname}-sata-1.vdi"))
+      node.vm.provider "virtualbox" do |v|
+        # Add SATAController
+        v.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata"]
+        ["1","2","3"].each do |disk|
+          diskname = File.expand_path("~/#{node.vm.hostname}-sata-#{disk}.vdi")
+          v.customize ['createhd', '--filename', diskname, '--size', 4096]
+          v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        end
       end
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/node03.pem'
-      salt.minion_pub = 'keys/node03.pub'
+      salt.minion_key = "keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
     end
   end
+
 end

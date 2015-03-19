@@ -6,7 +6,11 @@ db_engine: "mysql"
 
 queue_engine: "rabbit"
 
-hosts: 
+# Allow for qemu (virtual machine enviroment) and kvm,
+# will default to kvm (physical) if variable not present
+compute_kvm_virt_type: "qemu"
+
+hosts:
   "control01": "192.168.33.21"
   "node01": "192.168.33.31"
   "node02": "192.168.33.32"
@@ -24,13 +28,13 @@ storage:
   - "node01"
   - "node02"
   - "node03"
-compute: 
+compute:
   - "node01"
   - "node02"
   - "node03"
 
-sls: 
-  - controller: 
+sls:
+  - controller:
     - "ntp"
     - "mysql"
     - "mysql.client"
@@ -48,7 +52,7 @@ sls:
     - "horizon"
     - "cinder"
     - "heat"
-  - network: 
+  - network:
     - "mysql.client"
     - "neutron.services"
     - "neutron.ml2"
@@ -56,14 +60,14 @@ sls:
     - "neutron.networks"
     - "neutron.routers"
     - "neutron.security_groups"
-  - compute: 
+  - compute:
     - "mysql.client"
     - "nova.compute_kvm"
     - "neutron.openvswitch"
     - "neutron.ml2"
   - storage:
     - "mysql.client"
-    #- "cinder.volume"
+    - "cinder.volume"
 
 glance:
   images:
@@ -81,5 +85,5 @@ files:
 cinder:
   volumes_group_name: "cinder-volumes"
   volumes_path: "/var/lib/cinder/cinder-volumes"
-  volumes_group_size: "<volumes_group_size_in_gigabytes>"
+  volumes_group_size: "1"
   loopback_device: "/dev/loop0"

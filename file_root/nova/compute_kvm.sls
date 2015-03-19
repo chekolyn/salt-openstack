@@ -91,7 +91,7 @@ nova_conf_compute:
         database: 
           connection: "mysql://{{ salt['pillar.get']('databases:nova:username') }}:{{ salt['pillar.get']('databases:nova:password') }}@{{ get_candidate('mysql') }}/{{ salt['pillar.get']('databases:nova:db_name') }}"
         libvirt:
-          virt_type: kvm
+          virt_type: {{ salt['pillar.get']('compute_kvm_virt_type', 'kvm') }}
           cpu_mode: none
     - require: 
       - pkg: nova_compute_install
