@@ -25,9 +25,6 @@ Vagrant.configure("2") do |config|
   unless File.exist?(File.expand_path("~/.vagrantuser"))
     puts "**** PLEASE install and configure the vagrant nugrant plugin *****"
     puts "**** looking for %s *****" % [ File.expand_path("~/.vagrantuser") ]
-  else
-    puts "**** NUGRANT home file settings found *****"
-    puts "**** nugrant home_file: %s ****" % [ File.expand_path("~/.vagrantuser") ]
   end
 
    # Options for libvirt vagrant provider.
@@ -70,15 +67,11 @@ Vagrant.configure("2") do |config|
     # Will override most other settings
     if config.user.libvirt.has_key?(:uri)
       libvirt.uri = config.user.libvirt.uri
-    else
-      libvirt.uri = 'qemu+unix:///system'
     end
 
     # If use ssh tunnel to connect to Libvirt.
     if config.user.libvirt.has_key?(:connect_via_ssh)
       libvirt.connect_via_ssh = config.user.libvirt.connect_via_ssh
-    else
-      libvirt.connect_via_ssh = false
     end
 
     # The username and password to access Libvirt. Password is not used when
@@ -86,6 +79,7 @@ Vagrant.configure("2") do |config|
     if config.user.libvirt.has_key?(:username)
       libvirt.username = config.user.libvirt.username
     end
+    
     if config.user.libvirt.has_key?(:password)
       libvirt.username = config.user.libvirt.password
     end
@@ -102,7 +96,6 @@ Vagrant.configure("2") do |config|
     if config.user.libvirt.has_key?(:default_prefix)
       libvirt.default_prefix = config.user.libvirt.default_prefix
     end
-
   end
 
   config.vm.define "master" do |node|
