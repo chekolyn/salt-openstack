@@ -2,3 +2,4 @@
 *.swo
 *~
 **.vagrant
+*.project

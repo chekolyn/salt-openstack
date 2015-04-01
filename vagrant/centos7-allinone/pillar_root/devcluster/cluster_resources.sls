@@ -56,7 +56,7 @@ sls:
     - "neutron.security_groups"
   - compute:
     - "mysql.client"
-    - "nova.compute_qemu"
+    - "nova.compute_kvm"
     - "neutron.openvswitch"
     - "neutron.ml2"
   - storage:

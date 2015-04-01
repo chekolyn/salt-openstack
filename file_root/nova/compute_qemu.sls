@@ -69,12 +69,30 @@ nova_conf_compute:
           vncserver_listen: 0.0.0.0
           vncserver_proxyclient_address: {{ get_candidate('nova.compute_qemu') }}
           novncproxy_base_url: "http://{{ get_candidate('nova') }}:6080/vnc_auto.html"
-          ####
+          #### qemu settings
           force_raw_images: True
+          root_helper: sudo nova-rootwrap /etc/nova/rootwrap.conf
+          vif_plugging_is_fatal: False
+          vif_plugging_timeout: 10
+          ### neutron missing:
+          network_api_class: nova.network.neutronv2.api.API
+          security_group_api: neutron
+          firewall_driver: nova.virt.firewall.NoopFirewallDriver
+
+
 
 {% if pillar['cluster_type'] == 'juno' %}
         glance:
           host: "{{ get_candidate('glance') }}"
+        neutron:
+          url: http://{{ get_candidate('neutron') }}:9696
+          auth_strategy: keystone
+          admin_auth_url: http://{{ get_candidate('keystone') }}:35357/v2.0
+          admin_tenant_name: service
+          admin_username: neutron
+          admin_password: "{{ salt['pillar.get']('keystone:tenants:service:users:neutron:password') }}"
+          service_metadata_proxy: True
+          metadata_proxy_shared_secret: "{{ salt['pillar.get']('neutron:metadata_secret') }}"
 {% else %}
           glance_host: {{ get_candidate('glance') }}
 {% endif %}

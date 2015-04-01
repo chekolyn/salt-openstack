@@ -29,7 +29,6 @@ storage:
   - "node02"
   - "node03"
 compute:
-  - "control01"
   - "node01"
   - "node02"
   - "node03"
