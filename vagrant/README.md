@@ -24,32 +24,32 @@ The nugrant plugin will look for /home/[username]/.vagrantuser
 
 Localhost config example
 
-libvirt:
-  driver: "kvm"
-  memory: "4096"
-  cpu:    "4"
-  nested: "True"
-  cpu_mode: "host-model"
-  uri: "qemu+unix:///system"
-  host: ""
-  username: ""
-  password: ""
-  connect_via_ssh: False
-  storage_pool_name: "default"
+	libvirt:
+	  driver: "kvm"
+	  memory: "4096"
+	  cpu:    "4"
+	  nested: "True"
+	  cpu_mode: "host-model"
+	  uri: "qemu+unix:///system"
+	  host: ""
+	  username: ""
+	  password: ""
+	  connect_via_ssh: False
+	  storage_pool_name: "default"
   
   
 Remote server config example 
 
-libvirt:
-  driver: "kvm"
-  memory: "4096"
-  cpu:    "4"
-  nested: "True"
-  cpu_mode: "host-model"
-  host: "remotehost.example.com"
-  username: "username"
-  connect_via_ssh: true
-  storage_pool_name: "default"
+	libvirt:
+	  driver: "kvm"
+	  memory: "4096"
+	  cpu:    "4"
+	  nested: "True"
+	  cpu_mode: "host-model"
+	  host: "remotehost.example.com"
+	  username: "username"
+	  connect_via_ssh: true
+	  storage_pool_name: "default"
 
 
 Note: if you use **uri** - For advanced usage. Directly specifies what libvirt connection URI vagrant-libvirt should use. Overrides all other connection configuration options.
@@ -75,10 +75,15 @@ Login to you master node:
     # It will upload all of the custom dynamic modules to the targeted minion(s). 
     # Custom modules for OpenStack (network create, router create, security group create, etc.) have been defined.
 
-    sudo salt -C 'I@devcluster:devcluster' state.highstate  
+    sudo salt -C 'I@devcluster:devcluster' state.highstate
     # It will install the OpenStack environment 
 	
 ### Bugs
-The "uvsmtid/centos-7.0-minimal" box has Networkmanager by default; salt-openstack will disable and remove network manager sometimes this has the effect that the vms get disconnected from the Vagrant Managment network (vagrant-libvirt) on eth0.
-There is a "configs/ifcfg-eth0" file that will enable dhcp on eth0, you might need to do ifdown eth0 && ifup eth0 to get a dhcp lease in the console.
+The "uvsmtid/centos-7.0-minimal" box has Networkmanager by default. 
+salt-openstack will disable and remove Networkmanager sometimes this has the effect that the vms get disconnected from the Vagrant Managment network (vagrant-libvirt) on eth0.
+There is a "configs/ifcfg-eth0" file that will enable dhcp on eth0, you might need to do this to get a dhcp lease in the console:
+
+	ifdown eth0 && ifup eth0
+
+A bootstrap script that addresses this might be helpful in the future. 
 
