@@ -90,11 +90,12 @@ nova_conf_compute:
           admin_password: {{ salt['pillar.get']('keystone:tenants:service:users:nova:password') }}
         database: 
           connection: "mysql://{{ salt['pillar.get']('databases:nova:username') }}:{{ salt['pillar.get']('databases:nova:password') }}@{{ get_candidate('mysql') }}/{{ salt['pillar.get']('databases:nova:db_name') }}"
-        libvirt
+        libvirt:
 {% if grains['virtual'] == 'physical' %}
           virt_type: kvm
 {% else %}
           virt_type: qemu
+{% endif %}
           cpu_mode: none
     - require: 
       - pkg: nova_compute_install
