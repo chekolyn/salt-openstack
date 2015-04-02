@@ -22,12 +22,12 @@ see Ubuntu documentation link: https://help.ubuntu.com/community/KVM/Installatio
 ### Configure your nugrat settings
 The nugrant plugin will look for /home/[username]/.vagrantuser
 
-Localhost config example
+Localhost config example:
 
 	libvirt:
 	  driver: "kvm"
 	  memory: "4096"
-	  cpu:    "4"
+	  cpus:    "4"
 	  nested: "True"
 	  cpu_mode: "host-model"
 	  uri: "qemu+unix:///system"
@@ -38,12 +38,12 @@ Localhost config example
 	  storage_pool_name: "default"
   
   
-Remote server config example 
+Remote server config example:
 
 	libvirt:
 	  driver: "kvm"
 	  memory: "4096"
-	  cpu:    "4"
+	  cpus:    "4"
 	  nested: "True"
 	  cpu_mode: "host-model"
 	  host: "remotehost.example.com"
@@ -56,13 +56,13 @@ Note: if you use **uri** - For advanced usage. Directly specifies what libvirt c
 
 ### Test environment with Vagrant
 
-	cd vagrant/centos7-allinone  && vagrant up
+	cd vagrant/centos7-allinone  && vagrant up master && vagrant up allinone
 	
 Following the instructions at https://github.com/cloudbase/salt-openstack#3-install-openstack 
 
 They would translate to the allinone example like this (you have to do this on the master node)
 
-Login to you master node:
+Login to your master node:
 
 	vagrant ssh master
 	
