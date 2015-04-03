@@ -57,6 +57,8 @@ Note: if you use **uri** - For advanced usage. Directly specifies what libvirt c
 ### Test environment with Vagrant
 
 Each example should have a description and additional information on how Vagrant was configured and implemented.
+
+Tip: use **vagrant rsync-auto** to keep your local git repo syncronized with the vm servers.
 	
 ### Bugs
 The "uvsmtid/centos-7.0-minimal" box has Networkmanager by default. 
