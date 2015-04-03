@@ -56,27 +56,7 @@ Note: if you use **uri** - For advanced usage. Directly specifies what libvirt c
 
 ### Test environment with Vagrant
 
-	cd vagrant/centos7-allinone  && vagrant up master && vagrant up allinone
-	
-Following the instructions at https://github.com/cloudbase/salt-openstack#3-install-openstack 
-
-They would translate to the allinone example like this (you have to do this on the master node)
-
-Login to your master node:
-
-	vagrant ssh master
-	
-[root@master ~]#
-
-    sudo salt -L 'allinone' saltutil.refresh_pillar                         
-    # It will make the OpenStack parameters available on the targeted minion(s).
-
-    sudo salt -L 'allinone' saltutil.sync_all                               
-    # It will upload all of the custom dynamic modules to the targeted minion(s). 
-    # Custom modules for OpenStack (network create, router create, security group create, etc.) have been defined.
-
-    sudo salt -C 'I@devcluster:devcluster' state.highstate
-    # It will install the OpenStack environment 
+Each example should have a description and additional information on how Vagrant was configured and implemented.
 	
 ### Bugs
 The "uvsmtid/centos-7.0-minimal" box has Networkmanager by default. 

@@ -24,8 +24,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: "systemctl stop firewalld",
     run: "always"
     
-  ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb"
-  
+  ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb" ###
+  ########################################################################
   
   ### VMs definitions START ####
   config.vm.define "master" do |node|

@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     run: "always"
     
   ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb" ###
-  ########################################################################   
+  ########################################################################
 
   ### VMs definitions START ####
   config.vm.define "master" do |node|
@@ -101,7 +101,7 @@ Vagrant.configure("2") do |config|
       salt.minion_config = "configs/minion"
       salt.minion_key = 'keys/control01.pem'
       salt.minion_pub = 'keys/control01.pub'
-      salt.run_highstate = true
+      salt.run_highstate = false
     end
   end
 
