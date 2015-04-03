@@ -12,6 +12,7 @@ end
 Vagrant.configure("2") do |config|
   
   config.vm.box = "uvsmtid/centos-7.0-minimal"
+  config.vm.box_url = "https://atlas.hashicorp.com/uvsmtid/boxes/centos-7.0-minimal/versions/1.0.0/providers/libvirt.box"
   
   # Configure dhcp on eth0 on reboots:
   config.vm.provision "file", source: "configs/ifcfg-eth0", destination: "/tmp/ifcfg-eth0"

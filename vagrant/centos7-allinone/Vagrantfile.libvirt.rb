@@ -10,8 +10,9 @@ rescue LoadError
 end
 
 Vagrant.configure("2") do |config|
-  #config.vm.box = "puppetlabs-centos-7.0-64-nocm"
+  
   config.vm.box = "uvsmtid/centos-7.0-minimal"
+  config.vm.box_url = "https://atlas.hashicorp.com/uvsmtid/boxes/centos-7.0-minimal/versions/1.0.0/providers/libvirt.box"
 
   # Configure dhcp on eth0 on reboots:
   config.vm.provision "file", source: "configs/ifcfg-eth0", destination: "/tmp/ifcfg-eth0"
@@ -51,10 +52,6 @@ Vagrant.configure("2") do |config|
     node.vm.synced_folder "../../file_root/", "/srv/salt", type: "rsync"
     node.vm.synced_folder "pillar_root/", "/srv/pillar", type: "rsync"
 
-
-    # Fix vagrant libvirt dhcp network issue:
-    #node.vm.provision "shell", inline: "ip addr flush eth1 && ifup eth1"
-
     # salt-master provisioning
     node.vm.provision :salt do |salt|
       salt.install_master = true
@@ -91,14 +88,6 @@ Vagrant.configure("2") do |config|
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: false,
       auto_config: false
-
-
-    # Configure minion_id identifier if using a salted image:
-    #node.vm.provision "shell", inline: "echo 'control01' > /etc/salt/minion_id"
-
-    # Fix vagrant libvirt dhcp network issue:
-    #node.vm.provision "shell", inline: "ip addr flush eth1 && ifup eth1"
-    #node.vm.provision "shell", inline: "ip addr flush eth2"
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
