@@ -6,10 +6,6 @@ db_engine: "mysql"
 
 queue_engine: "rabbit"
 
-# Allow for qemu (virtual machine enviroment) and kvm,
-# will default to kvm (physical) if variable not present
-compute_kvm_virt_type: "qemu"
-
 hosts:
   "control01": "192.168.33.21"
   "node01": "192.168.33.31"
@@ -62,7 +58,7 @@ sls:
     - "neutron.security_groups"
   - compute:
     - "mysql.client"
-    - "nova.compute_qemu"
+    - "nova.compute_kvm"
     - "neutron.openvswitch"
     - "neutron.ml2"
   - storage:
