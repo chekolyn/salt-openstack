@@ -6,10 +6,6 @@ db_engine: "mysql"
 
 queue_engine: "rabbit"
 
-# Allow for qemu (virtual machine enviroment) and kvm,
-# will default to kvm (physical) if variable not present
-compute_kvm_virt_type: "qemu"
-
 hosts:
   "allinone": "192.168.33.21"
 
