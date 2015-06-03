@@ -59,6 +59,7 @@ sls:
   - compute:
     - "mysql.client"
     - "nova.compute_kvm"
+    - "neutron.conf"
     - "neutron.openvswitch"
     - "neutron.ml2"
   - storage:

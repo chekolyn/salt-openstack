@@ -22,14 +22,14 @@ Login to your master node:
 	
 [root@master ~]#
 
-    sudo salt -L 'allinone' saltutil.refresh_pillar                         
+    sudo salt -L 'control01,node01' saltutil.refresh_pillar                         
     # It will make the OpenStack parameters available on the targeted minion(s).
 
-    sudo salt -L 'allinone' saltutil.sync_all                               
+    sudo salt -L 'control01,node01' saltutil.sync_all                               
     # It will upload all of the custom dynamic modules to the targeted minion(s). 
     # Custom modules for OpenStack (network create, router create, security group create, etc.) have been defined.
 
-    sudo salt -C 'I@devcluster:devcluster' state.highstate
+    sudo salt -L 'control01,node01' state.highstate
     # It will install the OpenStack environment 
 
 

@@ -4,7 +4,7 @@
 # NOTE: Using Vagrant nugrant plugin to abstract the hipervisor settings
 # Load common config.libvirt.rb
 begin
-  load '../common-config/config.libvirt.rb'
+  load '../common/config.libvirt.rb'
 rescue LoadError
   # ignore
 end
@@ -18,6 +18,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "configs/ifcfg-eth0", destination: "/tmp/ifcfg-eth0"
   config.vm.provision "shell", inline: "cp /tmp/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0",
     run: "always"
+    
+  # Configure eth0 via script:
+  config.vm.provision "shell", path: "..common/disable_network_manager.sh"
 
   # Centos7 Disable Firewall
   config.vm.provision "shell", inline: "systemctl disable firewalld",

@@ -4,7 +4,7 @@
 # NOTE: Using Vagrant nugrant plugin to abstract the hipervisor settings
 # Load common config.libvirt.rb
 begin
-  load '../common-config/config.libvirt.rb'
+  load '../common/config.libvirt.rb'
 rescue LoadError
   # ignore
 end
@@ -14,17 +14,14 @@ Vagrant.configure("2") do |config|
   config.vm.box = "uvsmtid/centos-7.0-minimal"
   config.vm.box_url = "https://atlas.hashicorp.com/uvsmtid/boxes/centos-7.0-minimal/versions/1.0.0/providers/libvirt.box"
   
-  # Configure dhcp on eth0 on reboots:
-  config.vm.provision "file", source: "configs/ifcfg-eth0", destination: "/tmp/ifcfg-eth0"
-
-  config.vm.provision "shell", inline: "cp /tmp/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0",
-    run: "always"
-
   # Centos7 Disable Firewall
   config.vm.provision "shell", inline: "systemctl disable firewalld",
     run: "always"
   config.vm.provision "shell", inline: "systemctl stop firewalld",
     run: "always"
+  
+  # Configure eth0 via script, will disable NetworkManager and enable legacy network daemon:
+  config.vm.provision "shell", path: "../common/disable_network_manager.sh"
     
   ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb" ###
   ########################################################################
@@ -83,6 +80,10 @@ Vagrant.configure("2") do |config|
     # Openstack Network for Admin/Public/Mgmt
     node.vm.network :private_network, ip: "192.168.33.21",
       libvirt__network_name: "salt-os-public"
+      
+    # Vagrant forward web port:
+    node.vm.network "forwarded_port", guest: 80, host: 8080,
+      auto_correct: true
 
     # Openstack Flat Network for openstack
     # no dhcp needed here from vagrant, dhcp via Openstack
