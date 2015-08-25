@@ -10,27 +10,22 @@ rescue LoadError
 end
 
 Vagrant.configure("2") do |config|
-  
+
   config.vm.box = "uvsmtid/centos-7.0-minimal"
   config.vm.box_url = "https://atlas.hashicorp.com/uvsmtid/boxes/centos-7.0-minimal/versions/1.0.0/providers/libvirt.box"
-
-  # Configure dhcp on eth0 on reboots:
-  config.vm.provision "file", source: "configs/ifcfg-eth0", destination: "/tmp/ifcfg-eth0"
-  config.vm.provision "shell", inline: "cp /tmp/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0",
-    run: "always"
-    
-  # Configure eth0 via script:
-  config.vm.provision "shell", path: "..common/disable_network_manager.sh"
 
   # Centos7 Disable Firewall
   config.vm.provision "shell", inline: "systemctl disable firewalld",
     run: "always"
   config.vm.provision "shell", inline: "systemctl stop firewalld",
     run: "always"
-    
+
+  # Configure eth0 via script, will disable NetworkManager and enable legacy network daemon:
+  config.vm.provision "shell", path: "../common/disable_network_manager.sh"
+
   ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb" ###
   ########################################################################
-  
+
   ### VMs definitions START ####
   config.vm.define "master" do |node|
 
@@ -61,16 +56,16 @@ Vagrant.configure("2") do |config|
       salt.always_install = true
       salt.master_config = "configs/master"
       salt.run_highstate = false
-      salt.master_key = 'keys/master.pem'
-      salt.master_pub = 'keys/master.pub'
+      salt.master_key = '../common/keys/master.pem'
+      salt.master_pub = '../common/keys/master.pub'
 
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/master.pem'
-      salt.minion_pub = 'keys/master.pub'
+      salt.minion_key = '../common/keys/master.pem'
+      salt.minion_pub = '../common/keys/master.pub'
 
       salt.seed_master = {
-        'master' => 'keys/master.pub',
-        'allinone' => 'keys/allinone.pub'
+        'master' => '../common/keys/master.pub',
+        'allinone' => '../common/keys/allinone.pub'
       }
     end
   end
@@ -95,11 +90,11 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/allinone.pem'
-      salt.minion_pub = 'keys/allinone.pub'
-      salt.run_highstate = true
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
+      salt.run_highstate = false
     end
   end
   ### VMs definitions END ####
-  
+
 end

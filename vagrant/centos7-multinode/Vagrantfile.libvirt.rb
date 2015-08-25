@@ -10,19 +10,19 @@ rescue LoadError
 end
 
 Vagrant.configure("2") do |config|
-  
+
   config.vm.box = "uvsmtid/centos-7.0-minimal"
   config.vm.box_url = "https://atlas.hashicorp.com/uvsmtid/boxes/centos-7.0-minimal/versions/1.0.0/providers/libvirt.box"
-  
+
   # Centos7 Disable Firewall
   config.vm.provision "shell", inline: "systemctl disable firewalld",
     run: "always"
   config.vm.provision "shell", inline: "systemctl stop firewalld",
     run: "always"
-  
+
   # Configure eth0 via script, will disable NetworkManager and enable legacy network daemon:
   config.vm.provision "shell", path: "../common/disable_network_manager.sh"
-    
+
   ### NOTE:Hypervisor configuration abstracted at: "config.libvirt.rb" ###
   ########################################################################
 
@@ -56,19 +56,19 @@ Vagrant.configure("2") do |config|
       salt.always_install = true
       salt.master_config = "configs/master"
       salt.run_highstate = false
-      salt.master_key = 'keys/master.pem'
-      salt.master_pub = 'keys/master.pub'
+      salt.master_key = '../common/keys/master.pem'
+      salt.master_pub = '../common/keys/master.pub'
 
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/master.pem'
-      salt.minion_pub = 'keys/master.pub'
+      salt.minion_key = '../common/keys/master.pem'
+      salt.minion_pub = '../common/keys/master.pub'
 
       salt.seed_master = {
-        'master' => 'keys/master.pub',
-        'control01' => 'keys/control01.pub',
-        'node01' => 'keys/node01.pub',
-        'node02' => 'keys/node02.pub',
-        'node03' => 'keys/node03.pub'
+        'master' => '../common/keys/master.pub',
+        'control01' => '../common/keys/control01.pub',
+        'node01' => '../common/keys/node01.pub',
+        'node02' => '../common/keys/node02.pub',
+        'node03' => '../common/keys/node03.pub'
       }
     end
   end
@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
     # Openstack Network for Admin/Public/Mgmt
     node.vm.network :private_network, ip: "192.168.33.21",
       libvirt__network_name: "salt-os-public"
-      
+
     # Vagrant forward web port:
     node.vm.network "forwarded_port", guest: 80, host: 8080,
       auto_correct: true
@@ -101,8 +101,8 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/control01.pem'
-      salt.minion_pub = 'keys/control01.pub'
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
       salt.run_highstate = false
     end
   end
@@ -124,19 +124,18 @@ Vagrant.configure("2") do |config|
       auto_config: false
 
     # Configure extra drives, assume they all exist if the first one is present:
-    # Add 3 additional 4GB drives
-    config.vm.provider :libvirt do |libvirt|
-      libvirt.memory = 4096
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
+    # Add 3 additional 10GB drives
+    node.vm.provider :libvirt do |libvirt|
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
     end
   end
 
@@ -156,18 +155,18 @@ Vagrant.configure("2") do |config|
       auto_config: false
 
     # Configure extra drives, assume they all exist if the first one is present:
-    # Add 3 additional 4GB drives
-    config.vm.provider :libvirt do |libvirt|
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
+    # Add 3 additional 10GB drives
+    node.vm.provider :libvirt do |libvirt|
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
     end
   end
 
@@ -187,20 +186,20 @@ Vagrant.configure("2") do |config|
       auto_config: false
 
     # Configure extra drives, assume they all exist if the first one is present:
-    # Add 3 additional 4GB drives
-    config.vm.provider :libvirt do |libvirt|
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
-      libvirt.storage :file, :size => '4G'
+    # Add 3 additional 10GB drives
+    node.vm.provider :libvirt do |libvirt|
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
+      libvirt.storage :file, :size => '10G'
     end
 
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
     end
   end
-  ### VMs definitions END ####  
+  ### VMs definitions END ####
 
 end

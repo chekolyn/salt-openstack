@@ -48,6 +48,7 @@
 {% do formulas.append('generics.repositories') %}
 {% do formulas.append('generics.system_update') %}
 {% do formulas.append('generics.openstack_packages') %}
+{% do formulas.append('generics.timezone') %}
 {% for role in roles %}
   {% for formula in salt['pillar.get']('sls:%s' % role, default=()) %}
     {% if formula not in formulas %}

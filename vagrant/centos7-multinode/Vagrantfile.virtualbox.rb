@@ -31,19 +31,19 @@ Vagrant.configure("2") do |config|
       salt.always_install = true
       salt.master_config = "configs/master"
       salt.run_highstate = false
-      salt.master_key = 'keys/master.pem'
-      salt.master_pub = 'keys/master.pub'
+      salt.master_key = '../common/keys/master.pem'
+      salt.master_pub = '../common/keys/master.pub'
 
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/master.pem'
-      salt.minion_pub = 'keys/master.pub'
+      salt.minion_key = '../common/keys/master.pem'
+      salt.minion_pub = '../common/keys/master.pub'
 
       salt.seed_master = {
-        'master' => 'keys/master.pub',
-        'control01' => 'keys/control01.pub',
-        'node01' => 'keys/node01.pub',
-        'node02' => 'keys/node02.pub',
-        'node03' => 'keys/node03.pub'
+        'master' => '../common/keys/master.pub',
+        'control01' => '../common/keys/control01.pub',
+        'node01' => '../common/keys/node01.pub',
+        'node02' => '../common/keys/node02.pub',
+        'node03' => '../common/keys/node03.pub'
       }
     end
   end
@@ -71,8 +71,9 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/control01.pem'
-      salt.minion_pub = 'keys/control01.pub'
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
+      salt.run_highstate = false
     end
   end
 
@@ -116,8 +117,9 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
+      salt.run_highstate = false
     end
   end
 
@@ -160,8 +162,9 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
+      salt.run_highstate = false
     end
   end
 
@@ -204,8 +207,9 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = "keys/#{node.vm.hostname}.pem"
-      salt.minion_pub = "keys/#{node.vm.hostname}.pub"
+      salt.minion_key = "../common/keys/#{node.vm.hostname}.pem"
+      salt.minion_pub = "../common/keys/#{node.vm.hostname}.pub"
+      salt.run_highstate = false
     end
   end
 

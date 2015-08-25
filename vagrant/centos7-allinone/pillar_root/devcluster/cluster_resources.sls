@@ -64,7 +64,7 @@ glance:
     "cirros":
       min_disk: "0"
       min_ram: "0"
-      copy_from: "https://download.cirros-cloud.net/0.3.3/cirros-0.3.3-i386-disk.img>"
+      copy_from: "https://download.cirros-cloud.net/0.3.3/cirros-0.3.3-i386-disk.img"
       user: "admin"
       tenant: "admin"
 

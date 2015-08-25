@@ -11,7 +11,6 @@ ONBOOT=yes
 DHCP
 }
 
-
 # Stop and Disable NetworkManager
 /bin/systemctl stop NetworkManager
 /bin/systemctl disable NetworkManager
@@ -20,4 +19,8 @@ DHCP
 set_dhcp_eth0
 
 # Start network daemon
+/bin/systemctl start network
 /bin/systemctl enable network
+
+# Quickly reconfigure eth0
+ifdown eth0 && ifup eth0
