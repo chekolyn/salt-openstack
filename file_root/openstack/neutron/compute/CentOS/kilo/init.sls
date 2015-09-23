@@ -6,8 +6,8 @@
 neutron_compute_sysctl_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['sysctl'] }}"
-    - sections: 
-        DEFAULT_IMPLICIT: 
+    - sections:
+        DEFAULT_IMPLICIT:
           net.ipv4.conf.all.rp_filter: 0
           net.ipv4.conf.default.rp_filter: 0
 
@@ -33,15 +33,15 @@ neutron_compute_conf_keystone_authtoken:
 neutron_compute_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['neutron'] }}"
-    - sections: 
-        DEFAULT: 
+    - sections:
+        DEFAULT:
           auth_strategy: keystone
           core_plugin: ml2
           service_plugins: router
           allow_overlapping_ips: True
           debug: "{{ salt['openstack_utils.boolean_value'](openstack_parameters['debug_mode']) }}"
           verbose: "{{ salt['openstack_utils.boolean_value'](openstack_parameters['debug_mode']) }}"
-        keystone_authtoken: 
+        keystone_authtoken:
           auth_uri: "http://{{ openstack_parameters['controller_ip'] }}:5000"
           auth_url: "http://{{ openstack_parameters['controller_ip'] }}:35357"
           auth_plugin: "password"
@@ -50,7 +50,7 @@ neutron_compute_conf:
           project_name: "service"
           username: "neutron"
           password: "{{ service_users['neutron']['password'] }}"
-    - require: 
+    - require:
       - ini: neutron_compute_conf_keystone_authtoken
 
 
@@ -86,7 +86,10 @@ neutron_compute_ml2_conf:
         ovs:
           integration_bridge: {{ neutron['integration_bridge'] }}
           local_ip: {{ salt['openstack_utils.minion_ip'](grains['id']) }}
-{% if salt['openstack_utils.boolean_value'](neutron['tunneling']['enable']) %} 
+{% if neutron['bridge_mappings'] %}
+          bridge_mappings: "{{ ','.join(neutron['bridge_mappings']) }}"
+{% endif %}
+{% if salt['openstack_utils.boolean_value'](neutron['tunneling']['enable']) %}
         agent:
           tunnel_types: "{{ ','.join(neutron['tunneling']['types']) }}"
 {% endif %}

@@ -17,6 +17,11 @@ ntp_hwclock_sync:
   cmd.run:
     - name: hwclock --systohc --utc
 
+{% if grains['os'] == 'CentOS' %}
+systemd_reload_for_ntpd:
+  module.run:
+    - name: service.systemctl_reload
+{% endif %}
 
 ntp_service_running:
   service.running:
@@ -27,3 +32,6 @@ ntp_service_running:
       - pkg: ntp_{{ pkg }}_install
 {% endfor %}
       - cmd: ntp_hwclock_sync
+{% if grains['os'] == 'CentOS' %}
+      - module: systemd_reload_for_ntpd
+{% endif %}

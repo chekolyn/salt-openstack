@@ -6,8 +6,8 @@
 neutron_network_ipv4_forwarding_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['sysctl'] }}"
-    - sections: 
-        DEFAULT_IMPLICIT: 
+    - sections:
+        DEFAULT_IMPLICIT:
           net.ipv4.conf.all.rp_filter: 0
           net.ipv4.ip_forward: 1
           net.ipv4.conf.default.rp_filter: 0
@@ -34,15 +34,15 @@ neutron_network_conf_keystone_authtoken:
 neutron_network_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['neutron'] }}"
-    - sections: 
-        DEFAULT: 
+    - sections:
+        DEFAULT:
           auth_strategy: keystone
           core_plugin: ml2
           service_plugins: router
           allow_overlapping_ips: True
           debug: "{{ salt['openstack_utils.boolean_value'](openstack_parameters['debug_mode']) }}"
           verbose: "{{ salt['openstack_utils.boolean_value'](openstack_parameters['debug_mode']) }}"
-        keystone_authtoken: 
+        keystone_authtoken:
           auth_uri: "http://{{ openstack_parameters['controller_ip'] }}:5000"
           auth_url: "http://{{ openstack_parameters['controller_ip'] }}:35357"
           auth_plugin: "password"
@@ -51,7 +51,7 @@ neutron_network_conf:
           project_name: "service"
           username: "neutron"
           password: "{{ service_users['neutron']['password'] }}"
-    - require: 
+    - require:
       - ini: neutron_network_conf_keystone_authtoken
 
 
@@ -90,7 +90,7 @@ neutron_network_ml2_conf:
 {% if neutron['bridge_mappings'] %}
           bridge_mappings: "{{ ','.join(neutron['bridge_mappings']) }}"
 {% endif %}
-{% if salt['openstack_utils.boolean_value'](neutron['tunneling']['enable']) %} 
+{% if salt['openstack_utils.boolean_value'](neutron['tunneling']['enable']) %}
           tunnel_bridge: "{{ neutron['tunneling']['bridge'] }}"
         agent:
           tunnel_types: "{{ ','.join(neutron['tunneling']['types']) }}"
@@ -112,8 +112,8 @@ neutron_network_ml2_symlink:
 neutron_network_l3_agent_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['l3_agent'] }}"
-    - sections: 
-        DEFAULT: 
+    - sections:
+        DEFAULT:
           interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
           external_network_bridge: {{ neutron['external_bridge'] }}
           router_delete_namespaces: True
@@ -128,10 +128,12 @@ neutron_network_l3_agent_conf:
 neutron_network_dhcp_agent_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['dhcp_agent'] }}"
-    - sections: 
-        DEFAULT: 
+    - sections:
+        DEFAULT:
           interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
           dhcp_driver: neutron.agent.linux.dhcp.Dnsmasq
+          enable_isolated_metadata: {{ salt['openstack_utils.boolean_value'](neutron['dhcp_agent']['enable_isolated_metadata']) }}
+          enable_metadata_network: {{ salt['openstack_utils.boolean_value'](neutron['dhcp_agent']['enable_metadata_network']) }}
           dhcp_delete_namespaces: True
           dnsmasq_config_file: {{ neutron['conf']['dnsmasq_config_file'] }}
           debug: "{{ salt['openstack_utils.boolean_value'](openstack_parameters['debug_mode']) }}"
@@ -155,8 +157,8 @@ neutron_network_dnsmasq_conf:
 neutron_network_metadata_agent_conf:
   ini.options_present:
     - name: "{{ neutron['conf']['metadata_agent'] }}"
-    - sections: 
-        DEFAULT: 
+    - sections:
+        DEFAULT:
           auth_uri: "http://{{ openstack_parameters['controller_ip'] }}:5000"
           auth_url: "http://{{ openstack_parameters['controller_ip'] }}:35357"
           auth_region: RegionOne
@@ -227,7 +229,7 @@ neutron_network_l3_agent_running:
   service.running:
     - enable: True
     - name: "{{ neutron['services']['network']['l3_agent'] }}"
-    - watch: 
+    - watch:
       - ini: neutron_network_l3_agent_conf
 
 
@@ -235,7 +237,7 @@ neutron_network_dhcp_agent_running:
   service.running:
     - enable: True
     - name: "{{ neutron['services']['network']['dhcp_agent'] }}"
-    - watch: 
+    - watch:
       - ini: neutron_network_dhcp_agent_conf
 
 
@@ -243,7 +245,7 @@ neutron_network_metadata_agent_running:
   service.running:
     - enable: True
     - name: "{{ neutron['services']['network']['metadata_agent'] }}"
-    - watch: 
+    - watch:
       - ini: neutron_network_metadata_agent_conf
 
 

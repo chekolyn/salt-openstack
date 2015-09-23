@@ -317,6 +317,19 @@ def bridges():
                                  physnets[physnet]['hosts'][minion_id]})
     return bridges
 
+def dhcp_agent():
+    '''
+        returns a dictionary for dhcp_agent settings
+    '''
+    parameters = {
+        'enable_isolated_metadata': __salt__['pillar.get']('neutron:'
+            'dhcp_agent:enable_isolated_metadata', default=False),
+        'enable_metadata_network': __salt__['pillar.get']('neutron:'
+            'dhcp_agent:enable_metadata_network', default=False),
+    }
+
+    return parameters
+
 
 def subnets(network_name=None):
     if not network_name:
@@ -586,6 +599,7 @@ def neutron():
                                     ':integration_bridge', default='br-int'),
         'single_nic': __salt__['pillar.get']('neutron:single_nic'),
         'metadata_secret': __salt__['pillar.get']('neutron:metadata_secret'),
+        'dhcp_agent': dhcp_agent(),
         'networks': networks(),
         'routers': routers(),
         'security_groups': security_groups()

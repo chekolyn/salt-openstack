@@ -26,23 +26,8 @@ system_network_running:
     - require:
       - service: system_network_manager_dead
 
-
-system_firewalld_dead:
-  service.dead:
-    - name: {{ system['services']['firewalld'] }}
-    - enable: False
-    - require:
-{% for pkg in system['packages'] %}
-      - pkg: system_{{ pkg }}_install
-{% endfor %}
-
-
-system_iptables_running:
-  service.running:
-    - name: {{ system['services']['iptables'] }}
-    - enable: True
-    - require:
-      - service: system_firewalld_dead
+include:
+  - .iptables
 
 
 {% for repo in yum_repository['repositories'] %}

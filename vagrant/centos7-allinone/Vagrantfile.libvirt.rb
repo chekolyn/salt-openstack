@@ -32,15 +32,15 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "master"
 
     # Openstack Network for Admin/Public/Mgmt
-    node.vm.network :private_network, type: "static", ip: "192.168.33.10",
+    node.vm.network :private_network, type: "static", ip: "192.168.34.10",
       libvirt__network_name: "salt-os-public",
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: true
 
-    # Openstack Flat Network for openstack
+    # Openstack Flat Network
     # no dhcp needed here from vagrant, dhcp via Openstack
     # the ip info here is a dummy config so Vagrant doesn't complain.
-    node.vm.network :private_network, ip: "192.168.36.10",
+    node.vm.network :private_network, ip: "192.168.37.10",
       libvirt__network_name: "salt-os-flat",
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: false,
@@ -75,13 +75,13 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "allinone"
 
     # Openstack Network for Admin/Public/Mgmt
-    node.vm.network :private_network, ip: "192.168.33.21",
+    node.vm.network :private_network, ip: "192.168.34.21",
       libvirt__network_name: "salt-os-public"
 
-    # Openstack Flat Network for openstack
+    # Openstack Flat Network
     # no dhcp needed here from vagrant, dhcp via Openstack
     # the ip info here is a dummy config so Vagrant doesn't complain.
-    node.vm.network :private_network, ip: "192.168.36.21",
+    node.vm.network :private_network, ip: "192.168.37.21",
       libvirt__network_name: "salt-os-flat",
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: false,

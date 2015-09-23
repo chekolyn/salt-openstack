@@ -1,15 +1,15 @@
-# Multinode
+# Multinode VLAN
 
 ### Description
 
-This is a multinode implementation.
+This is a **CentOS 7 Multinode Vlan** implementation.
 
 ### Test environment with Vagrant
 
 Make sure that the master is up before the the other nodes.
 This example has **salt.run_highstate = true** variable on so it will run salt automatically on the allinone node.
 
-	cd vagrant/centos7-multinode  && vagrant up master && vagrant up control01 && vagrant up node01
+	cd vagrant/centos7-multinode-vlan  && vagrant up master && vagrant up control01 && vagrant up node01
 
 
 Following the instructions at https://github.com/cloudbase/salt-openstack#3-install-openstack
@@ -39,55 +39,40 @@ Network | Subnet | Description
 --- | --- | ---
 vagrant-libvirt | 192.168.121.0/24 | Default vagrant management network
 salt-os-public | 192.168.34.0/24 | Openstack Public/Admin/Mgmt network
-salt-os-flat | 192.168.37.0/24 and 169.254.169.0/24 | Openstack Flat Network and metadata subnet
+salt-os-flat | 192.168.37.0/24 | Openstack Flat Network
+salt-os-vlan | --- | Openstack Vlan Networks
 
-### Metadata Subnet notes:
+#### Libvirt Host Open vSwitch Configuration:
 
-We need to modify the Libvirt network: **salt-os-flat** in order to make the metadata subnet **169.254.169.0/24** and the salt-os-flat subnet: 192.168.37.0/24 **co-exist**
+In order to test VLAN functionality we need to create an OVS Bridge on the Libvirt Host with the proper vlans in the trunk:
 
-We need to edit the salt-os-flat network
+1) Create OVS Bridge:
 
-	virsh net-edit salt-os-flat
+[root@host ~]#
 
-and add:
+	sudo ovs-vsctl add-br os-salt-vlan
+	sudo ovs-vsctl  set port  os-salt-vlan trunks=1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010
+
+Adding the OVS Bridge to Libvirt:
+
+1) Create the network definition file : **salt-os-vlan.xml**
+
 ```xml
-<ip address='169.254.169.1' netmask='255.255.255.0'>
-</ip>
-```
-
-From ( be careful with the uuid and the bridge name it could be different in your environment):
-```xml
-<network ipv6='yes'>
-<name>salt-os-flat</name>
-<uuid>d99663dc-78df-4e56-9746-7cfbb4a4054a</uuid>
-<forward mode='nat'/>
-<bridge name='virbr3' stp='on' delay='0'/>
-<mac address='52:54:00:f5:de:d8'/>
-<ip address='192.168.37.1' netmask='255.255.255.0'>
-</ip>
+<network>
+<name>salt-os-vlan</name>
+<forward mode='bridge'/>
+<bridge name='salt-os-vlan'/>
+<virtualport type='openvswitch'/>
 </network>
 ```
+2) Import it to Libvirt:
 
-To:
+[root@host ~]#
 
-```xml
-<network ipv6='yes'>
-  <name>salt-os-flat</name>
-  <uuid>d99663dc-78df-4e56-9746-7cfbb4a4054a</uuid>
-  <forward mode='nat'/>
-  <bridge name='virbr3' stp='on' delay='0'/>
-  <mac address='52:54:00:f5:de:d8'/>
-  <ip address='192.168.37.1' netmask='255.255.255.0'>
-  </ip>
-  <ip address='169.254.169.1' netmask='255.255.255.0'>
-  </ip>
-</network>
-```
+	sudo virsh net-define salt-os-vlan.xml
+	sudo virsh net-autostart salt-os-vlan
+	sudo virsh net-start salt-os-vlan
 
-We need to recreate the salt-os-flat network for the changes to take effect; unfortunately if there are any VMs atttached they will get disconnected; stopping and staring the VMs will re-add them to the network.
-
-	virsh net-destroy salt-os-flat
-	virsh net-start salt-os-flat
 
 ### Hosts
 

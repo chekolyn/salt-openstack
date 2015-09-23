@@ -46,6 +46,13 @@ Vagrant.configure("2") do |config|
       libvirt__dhcp_enabled: false,
       auto_config: true
 
+    # Openstack Vlan Network
+    node.vm.network :public_network,
+      type: "bridge",
+      dev: "os-salt-vlan",
+      ovs: true,
+      auto_config: false
+
     # Configure SALT info from local gitrepo:
     node.vm.synced_folder "../../file_root/", "/srv/salt", type: "rsync"
     node.vm.synced_folder "pillar_root/", "/srv/pillar", type: "rsync"
@@ -94,6 +101,13 @@ Vagrant.configure("2") do |config|
       libvirt__dhcp_enabled: false,
       auto_config: false
 
+    # Openstack Vlan Network
+    node.vm.network :public_network,
+      type: "bridge",
+      dev: "os-salt-vlan",
+      ovs: true,
+      auto_config: false
+
     # Fix vagrant libvirt dhcp network issue:
     node.vm.provision "shell", inline: "ip addr flush eth1 && ifup eth1"
     node.vm.provision "shell", inline: "ip addr flush eth2"
@@ -121,6 +135,13 @@ Vagrant.configure("2") do |config|
       libvirt__network_name: "salt-os-flat",
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: false,
+      auto_config: false
+
+    # Openstack Vlan Network
+    node.vm.network :public_network,
+      type: "bridge",
+      dev: "os-salt-vlan",
+      ovs: true,
       auto_config: false
 
     # Configure extra drives, assume they all exist if the first one is present:
@@ -154,6 +175,13 @@ Vagrant.configure("2") do |config|
       libvirt__dhcp_enabled: false,
       auto_config: false
 
+    # Openstack Vlan Network
+    node.vm.network :public_network,
+      type: "bridge",
+      dev: "os-salt-vlan",
+      ovs: true,
+      auto_config: false
+
     # Configure extra drives, assume they all exist if the first one is present:
     # Add 3 additional 10GB drives
     node.vm.provider :libvirt do |libvirt|
@@ -183,6 +211,13 @@ Vagrant.configure("2") do |config|
       libvirt__network_name: "salt-os-flat",
       libvirt__netmask: "255.255.255.0",
       libvirt__dhcp_enabled: false,
+      auto_config: false
+
+    # Openstack Vlan Network
+    node.vm.network :public_network,
+      type: "bridge",
+      dev: "os-salt-vlan",
+      ovs: true,
       auto_config: false
 
     # Configure extra drives, assume they all exist if the first one is present:

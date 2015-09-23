@@ -66,3 +66,8 @@ openstack_promisc_interfaces_enable:
     - name: "{{ salt['openstack_utils.systemd_service_name'](openvswitch['conf']['promisc_interfaces_systemd']) }}"
     - require:
       - ini: openvswitch_promisc_interfaces_systemd_service
+
+neutron_network_openvswitch_agent_running_after_promisc_changes:
+  service.running:
+    - enable: True
+    - name: "{{ neutron['services']['network']['ovs_agent'] }}"
